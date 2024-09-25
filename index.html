@@ -196,10 +196,11 @@
 
         function fall(box) {
             const boxFallInterval = setInterval(() => {
-                if (isPaused || isGameOver) {
+                if (isGameOver) {
                     clearInterval(boxFallInterval);
                     return;
                 }
+                
                 const boxRect = box.getBoundingClientRect();
                 const containerRect = gameContainer.getBoundingClientRect();
                 const sliderRect = slider.getBoundingClientRect();
@@ -250,6 +251,8 @@
             if (!document.hidden) {
                 isPaused = false;
                 pauseBtn.textContent = '||';
+                // Resume falling boxes and slider movement
+                moveSlider(); 
             } else {
                 isPaused = true;
                 pauseBtn.textContent = '▶';
@@ -261,5 +264,3 @@
     </script>
 </body>
 </html>
-
-
