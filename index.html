@@ -142,11 +142,11 @@
         let fallInterval;
         let sliderPosition = 50; // Percentage of container width
         let moveDirection = 0; // -1 for left, 1 for right
-        const sliderSpeed = 3; // Increased speed for slider movement
-        const fallSpeed = 4; // Increased speed for falling boxes
+        let sliderSpeed = 3; // Increased speed for slider movement
+        let fallSpeed = 8; // Increased speed for falling boxes
 
         function startGame() {
-            fallInterval = setInterval(createBox, 1500); // Faster box creation
+            fallInterval = setInterval(createBox, 1500);
             moveSlider();
         }
 
@@ -157,9 +157,9 @@
             const sliderWidth = slider.clientWidth;
 
             if (moveDirection === -1 && sliderPosition > 5) {
-                sliderPosition -= sliderSpeed; // Move left smoothly
+                sliderPosition -= sliderSpeed; // Move left faster
             } else if (moveDirection === 1 && sliderPosition < 95 - (sliderWidth / containerWidth * 100)) {
-                sliderPosition += sliderSpeed; // Move right smoothly
+                sliderPosition += sliderSpeed; // Move right faster
             }
 
             slider.style.left = sliderPosition + '%';
@@ -223,7 +223,6 @@
                     } else {
                         isGameOver = true;
                         clearInterval(fallInterval);
-                        box.remove();
                         gameOverScreen.classList.add('active');
                     }
                     scoreDisplay.textContent = 'Score: ' + score;
@@ -231,42 +230,36 @@
             }, 50);
         }
 
-        startGame(); // Start the game on load
-
-        pauseBtn.addEventListener('click', () => {
-            isPaused = !isPaused;
-            pauseBtn.textContent = isPaused ? '▶' : '||'; // Change icon
-            if (isPaused) {
-                clearInterval(fallInterval);
-            } else {
-                startGame(); // Resume box creation
-            }
-        });
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                isPaused = true; // Pause when tab is inactive
-                pauseBtn.textContent = '▶';
-                clearInterval(fallInterval);
-            } else {
-                isPaused = false; // Resume when tab is active
-                startGame();
-            }
-        });
-
         restartBtn.addEventListener('click', () => {
             score = 0;
             scoreDisplay.textContent = 'Score: 0';
             isGameOver = false;
             gameOverScreen.classList.remove('active');
-            while (gameContainer.firstChild) {
-                gameContainer.removeChild(gameContainer.firstChild); // Remove all boxes
-            }
+            const boxes = document.querySelectorAll('.box');
+            boxes.forEach(box => box.remove()); // Only remove the falling boxes
             startGame();
         });
+
+        pauseBtn.addEventListener('click', () => {
+            isPaused = !isPaused;
+            pauseBtn.textContent = isPaused ? '▶' : '||';
+        });
+
+        // Resume game on tab focus
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                isPaused = false;
+                pauseBtn.textContent = '||';
+            } else {
+                isPaused = true;
+                pauseBtn.textContent = '▶';
+            }
+        });
+
+        // Start the game
+        startGame();
     </script>
 </body>
 </html>
-
 
 
